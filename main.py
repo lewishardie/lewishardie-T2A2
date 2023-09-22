@@ -7,6 +7,11 @@ bcrypt = Bcrypt()
 db = SQLAlchemy()
 ma = Marshmallow()
 
+# app = Flask(__name__)
+
+# @app.route('/')
+# def welcome():
+#     return "Welcome"
 
 def init_app():
     # create flask app instance
@@ -25,10 +30,10 @@ def init_app():
     from commands import db_commands
     app.register_blueprint(db_commands)
 
-    # # connect blueprint controllers
-    # from controllers import registered_controllers
+    # connect blueprint controllers
+    from controllers import registered_controllers
 
-    # for controller in registered_controllers:
-    #     app.register_blueprint(controller)
+    for controller in registered_controllers:
+        app.register_blueprint(controller)
 
     return app
