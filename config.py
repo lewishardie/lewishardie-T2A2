@@ -10,6 +10,13 @@ class BaseConfig(object):
         
         return db
     
+    @property
+    def JWT_SECRET_KEY(self):
+        secret_key = os.environ.get("SECRET_KEY")
+
+        return secret_key or "super-secret"
+
+
 class DevelopmentConfig(BaseConfig):
     DEBUG=True
 
@@ -28,4 +35,4 @@ elif env == "testing":
 else:
     app_config = ProductionConfig()
 
-    
+

@@ -16,14 +16,14 @@ def get_users():
     return jsonify(users_schema.dump(users))
 
 # create users
-@users.route("/", methods=["POST"])
-def create_users():
-    user_json = user_schema.load(request.json)
-    user = User(**user_json)
-    db.session.add(user)
-    db.session.commit()
+# @users.route("/", methods=["POST"])
+# def create_users():
+#     user_json = user_schema.load(request.json)
+#     user = User(**user_json)
+#     db.session.add(user)
+#     db.session.commit()
 
-    return jsonify(users_schema.dump(user))
+#     return jsonify(users_schema.dump(user))
 
 # OPTIONS
 #---------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ def create_users():
 #     return project_schema.dump(new_project)
 
 
-# /users/<id> -> user with id
+#/users/<id> -> user with id
 @users.route("/<int:user_id>", methods=["GET"])
 def get_user(user_id: int):
     q = db.select(User).filter_by(id=user_id) #filter(User.id == id) is another option
@@ -75,3 +75,22 @@ def get_user(user_id: int):
         return jsonify(response)
 
     return jsonify(message=f"User with id='{user_id}' not found")
+
+
+# # /users/<id> -> Updating a user with id
+
+# @users.route("<int:user_id>", methods=["PUT"])
+# def update_users(user_id:id):
+#     q = db.select(User).filter_by(id=user_id) #filter(User.id == id) is another option
+#     user = db.session.scalar(q)
+#     response = user_schema.dump(user)
+
+
+#     if response:
+#         user_json = user_schema.load(request.json)
+#         user.email = user_json["email"]
+#         user = User(user_json)
+#         db.session.commit()
+#         return jsonify(users_schema.dump(user))
+
+#     return jsonify(message=f"User with id='{user_id}' not found")

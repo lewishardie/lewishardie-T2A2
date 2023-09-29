@@ -2,10 +2,12 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 ma = Marshmallow()
+jwt = JWTManager()
 
 # app = Flask(__name__)
 
@@ -25,6 +27,10 @@ def init_app():
 
     # connect schemas
     ma.init_app(app)
+    
+    # creating 
+    bcrypt.init_app(app)
+    jwt.init_app(app)
 
     # connect CLI commands -> blueprint
     from commands import db_commands

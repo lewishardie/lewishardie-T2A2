@@ -10,3 +10,7 @@ Install dependencies and Freeze requirements
     pip install flask-bcrypt flask-jwt-extended flask-sqlalchemy flask-marshmallow marshmallow-sqlalchemy psycopg2-binary python-dotenv && pip install --upgrade pip && pip freeze > requirements.txt
 
 Initialize git
+
+
+
+
