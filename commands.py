@@ -2,7 +2,7 @@ from flask import Blueprint
 from datetime import date
 
 from main import db, bcrypt
-from models import User, League
+from models import User, League#, Team
 
 db_commands = Blueprint("db", __name__)
 
@@ -19,7 +19,7 @@ def seed_db():
         first_name = "lewis",
         last_name = "hardie",
         email = "lewishardie@gmail.com",
-        password = bcrypt.generate_password_hash("123456").decode("utf-8")
+        password = bcrypt.generate_password_hash("123456").decode("utf-8"),
     )
 
     # add all user objets to db
@@ -32,14 +32,14 @@ def seed_db():
 
     # create league object
     league1 = League(
-        name = "League Test",
+        league_name = "League Test",
         description = "this is a test for a league",
-        start_date = date(2024, 9, 1),
-        end_date = date(2025, 2, 20),
+        # start_date = date(2024, 9, 1),
+        # end_date = date(2025, 2, 20),
         max_players_per_team = 16,
         max_teams = 12,
         max_bench = 6,
-        commissioner = True
+        user_id = user1.id
     )
 
     # add league object to db
@@ -49,6 +49,26 @@ def seed_db():
 
     # commit db for league
     db.session.commit()
+
+        # create league object
+    # team1 = Team(
+    #     team_name = "Hardknocks",
+    #     # description = "this is a test for a league",
+    #     # # start_date = date(2024, 9, 1),
+    #     # # end_date = date(2025, 2, 20),
+    #     # max_players_per_team = 16,
+    #     # max_teams = 12,
+    #     # max_bench = 6,
+    #     # admin_id = user1.id
+    # )
+
+    # add team object to db
+    # db.session.add_all([
+    #     team1
+    # ])
+
+    # # commit db for team
+    # db.session.commit()
 
     # log if seed succeeds
     print("Database has been seeded")

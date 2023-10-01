@@ -9,11 +9,6 @@ db = SQLAlchemy()
 ma = Marshmallow()
 jwt = JWTManager()
 
-# app = Flask(__name__)
-
-# @app.route('/')
-# def welcome():
-#     return "Welcome"
 
 def init_app():
     # create flask app instance

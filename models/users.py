@@ -9,3 +9,8 @@ class User(db.Model):
     last_name = db.Column(db.Text)
     email = db.Column(db.Text, unique = True)
     password = db.Column(db.Text)
+
+    league = db.relationship("League", back_populates="user")
+
+    # league = db.relationship('League', back_populates="team")
+    # teams = db.relationship('Team', back_populates="user")

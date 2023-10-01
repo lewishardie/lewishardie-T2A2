@@ -45,13 +45,12 @@ def auth_register():
     # create expiry date
     # expiry = timedelta(days=1)
     # create access token
-    access_token = create_access_token(identity=user_json["email"])
+    access_token = create_access_token(identity=str(user.id))
 
     return jsonify({"user":user.email, "token": access_token }) # "user":user.email, 
 
 # Login authentication
 @auth.route("/login", methods=["POST"])
-# @jwt_required()
 def auth_login():
     # current_user = get_jwt_identity()
     # return jsonify(logged_in_as=current_user), 200
@@ -66,6 +65,10 @@ def auth_login():
     if not user or not bcrypt.check_password_hash(user.password, password):
         return abort (401, description = "Incorrect usernamd or password")
     
-    access_token = create_access_token(identity=user_json["email"])
+    expiry = timedelta(days=1)
+
+    access_token = create_access_token(identity=str(user.id), expires_delta=expiry)
     
-    return jsonify({"email": email, "token": access_token})
+    return jsonify({"message": "success", "email": user.email, "token": access_token})
+
+
