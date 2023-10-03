@@ -12,11 +12,15 @@ class League(db.Model):
     max_players_per_team = db.Column(db.Integer, nullable = False, default = 15) # amount of players allowed to be rostered on a team
     max_teams = db.Column(db.Integer, nullable = False, default = 12) # preferably even teams
     max_bench = db.Column(db.Integer, nullable = False, default = 6) # players 
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    # admin = db.Column(db.Boolean, default = False)
+
+    admin_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    admin = db.relationship("User", foreign_keys=[admin_id])
     
-    user = db.relationship("User", back_populates="league", uselist=False)
+    users = db.relationship("User", back_populates="leagues", cascade="all, delete")
     
-    # admin = db.relationship('User', back_populates="admin_league", uselist=False)    
+    teams = db.relationship("Team", back_populates="leagues")
+    
                          
     # roster_positions = db.Column(db.Text) # maybe break this off elsewhere
     # commissioner = db.Column(db.Boolean, nullable = False, default = False) # owner of the league

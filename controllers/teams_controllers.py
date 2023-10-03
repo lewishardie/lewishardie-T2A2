@@ -1,14 +1,19 @@
-# from flask import Blueprint, jsonify, request
-# from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 
-# from main import db
-# from models import League, User, Team
-# from schemas.teams import team_schema, teams_schema
+from main import db
+from models import League, User, Team
+from schemas.teams import team_schema, teams_schema
 
-# teams = Blueprint("team", __name__, url_prefix = "/team")
+teams = Blueprint("team", __name__, url_prefix = "/team")
 
-
+@teams.route("/", methods=["GET"])
+def get_teams():
+    q = db.select(Team)
+    teams = db.session.scalars(q)
+    
+    return jsonify(teams_schema.dump(teams))
 
 # @teams.route("/<int:team_id>", methods=["PUT"])
 # def delete_task(task_id: int):

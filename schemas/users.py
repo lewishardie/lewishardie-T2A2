@@ -10,14 +10,18 @@ class UserSchema(ma.Schema):
         fields = (
             "id",
             "username",
-            "first_name",
-            "last_name",
+            # "first_name",
+            # "last_name",
             "email",
-            "password",
-            "leagues"
+            "password", # delete when not needed
+            "leagues",
+            "admin_league",
         )
         
-    #leagues = fields.List(fields.Nested("LeagueSchema", exclude=("user",)))
+    admin_league = fields.Nested("LeagueSchema", exclude=("users",))
+    leagues = fields.List(fields.Nested("LeagueSchema", only=("league_name", "teams.team_name")))
+    
+    teams = fields.Nested("TeamSchema", many=True, exclude=("user", "league"))
 
 user_schema = UserSchema()
 users_schema = UserSchema(many = True)

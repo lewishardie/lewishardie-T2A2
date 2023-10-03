@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, abort
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 # from sqlalchemy.exc import IntegrityError, DataError
 from marshmallow.exceptions import ValidationError
@@ -22,16 +22,6 @@ def get_users():
 
     return jsonify(users_schema.dump(users))
 
-# create users
-# @users.route("/", methods=["POST"])
-# def create_users():
-#     user_json = user_schema.load(request.json)
-#     user = User(**user_json)
-#     db.session.add(user)
-#     db.session.commit()
-
-#     return jsonify(users_schema.dump(user))
-
 #/users/<id> -> user with id
 @users.route("/<int:user_id>", methods=["GET"])
 def get_user(user_id: int):
@@ -44,20 +34,15 @@ def get_user(user_id: int):
 
     return jsonify(message=f"User with id='{user_id}' not found")
 
-
-# /users/<id> -> Updating a user with id
+# Updating a user that has authorisation to do so
 
 @users.route("/<int:user_id>", methods=["PUT"])
 @jwt_required()
-def update_users(user_id: id):
-    user_id = get_jwt_identity()
-    q = db.select(User).filter_by(id=user_id)
-    user = db.session.scalar(q)
+def update_users(user_id: int):
+    current_user = get_jwt_identity()
+    q = db.select(User).filter_by(id=current_user)
+    user = db.session.scalar(q)    
     response = user_schema.dump(user)
-
-    # q = db.select(User).filter_by(id=user_id)
-    # user = db.session.scalar(q)
-    # response = user_schema.dump(user)
 
     if response:
         user_json = user_schema.load(request.json)
@@ -69,5 +54,24 @@ def update_users(user_id: id):
 
         db.session.commit()
         return jsonify(user_schema.dump(user))
+    
+    if not response:
+        return jsonify(message=f"User with id='{user_id}' not found")
 
+# Delete a user that has authorisation to do so
+
+@users.route("/<int:user_id>", methods=["DELETE"])
+@jwt_required()
+def delete_users(user_id: id):
+    user_id = get_jwt_identity()
+    q = db.select(User).filter_by(id=user_id)
+    user = db.session.scalar(q)
+    response = user_schema.dump(user)
+
+    if response:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify(message=f"User with the id=`{user_id}` has been deleted")
+    
+   
     return jsonify(message=f"User with id='{user_id}' not found")
