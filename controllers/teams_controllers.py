@@ -15,7 +15,7 @@ def get_teams():
     
     return jsonify(teams_schema.dump(teams))
 
-# @teams.route("/<int:team_id>", methods=["PUT"])
+# @teams.route("/<int:team_id>", methods=["POST"])
 # def delete_task(task_id: int):
 #     q = db.select(Task).filter_by(id=task_id)
 #     task = db.session.scalar(q)
