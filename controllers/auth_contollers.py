@@ -26,7 +26,7 @@ def register_user():
     user_json = user_schema.load(request.json)
     q = db.select(User).filter_by(email=user_json["email"])
     user = db.session.scalar(q)
-
+    print(user_json)
     if user:
         # return an abort message to inform the user. that will end the request
         return abort( 400, description = "Email already registered")
@@ -45,17 +45,15 @@ def register_user():
     # create expiry date
     expiry = timedelta(days=1)
     # create access token
-    access_token = create_access_token(identity=str(user.id), expires_delta=expiry)
+    access_token = create_access_token(identity=user.id, expires_delta=expiry)
 
     return jsonify({"user":user.email, "token": access_token }), 200 # "user":user.email, 
 
 # Login authentication
 @auth.route("/login", methods=["POST"])
-# @jwt_required()
+
 def login_user():
-    # current_user = get_jwt_identity()
-    # return jsonify(logged_in_as=current_user), 200
-    # user_json = user_schema.load(request.json)
+
     email = request.json["email"]
     password = request.json["password"]
 
@@ -63,17 +61,10 @@ def login_user():
     user = db.session.scalar(q)
 
     if not user or not bcrypt.check_password_hash(user.password, password):
-        return abort (401, description = "Incorrect usernamd or password")
+        return abort (401, description = "Incorrect username or password")
         
     expiry = timedelta(days=1)
 
-    access_token = create_access_token(identity=str(user.id), expires_delta=expiry)
+    access_token = create_access_token(identity=user.id, expires_delta=expiry)
         
     return jsonify({"message": "success", "email": user.email, "token": access_token}), 200
-
-
-# @auth.route("/protected", methods=["GET"])
-# @jwt_required()
-# def protected():
-#     current_user = get_jwt_identity()
-#     return jsonify(logged_in_as=current_user), 200

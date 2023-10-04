@@ -9,7 +9,6 @@ class Team(db.Model):
 #     #starters = db.Column(db.Test) # potentialy a foreign key
 #     #bench = db.Column(db.Test) # potentialy a foreign key
 
-
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     league_id = db.Column(db.Integer, db.ForeignKey("leagues.id"), nullable=False)
 

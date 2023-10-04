@@ -16,7 +16,7 @@ class User(db.Model):
     leagues = db.relationship("League", back_populates="users")
     teams = db.relationship("Team", back_populates="user")
 
-    # admin_league = db.relationship('League', back_populates="admin")
+    admin_league = db.relationship('League', back_populates="admin")
 
     # league = db.relationship('League', back_populates="team")
     # teams = db.relationship('Team', back_populates="user")

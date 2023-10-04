@@ -63,7 +63,6 @@ def seed_db():
         max_players_per_team = 16,
         max_teams = 12,
         max_bench = 6,
-        admin_id = user1.id
     )
 
     league2 = League(

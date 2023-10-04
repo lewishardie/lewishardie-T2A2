@@ -47,29 +47,31 @@ def get_league(league_id: int):
 
 @leagues.route("/<int:league_id>", methods=["DELETE"])
 @jwt_required()
-def delete_league(league_id: id):
-    user_id = get_jwt_identity()
+def delete_league(league_id):
+    # assign jwt identity to current_user_id
+    current_user_id = get_jwt_identity()
 
-    
     q = db.select(League).filter_by(id=league_id)
     league = db.session.scalar(q)
     response = league_schema.dump(league)
 
     if response:
-        db.session.delete(league)
-        db.session.commit()
-        return jsonify(message=f"league with the id=`{league_id}` has been deleted")
-    
-   
-    return jsonify(message=f"league with id='{league_id}' not found")
+        # Check if the current user is the admin of the league
+        if league.admin_id == current_user_id:
+            db.session.delete(league)
+            db.session.commit()
+            return jsonify(message=f"league with the id=`{league_id}` has been deleted")
+        else:
+            return jsonify(message="You are not authorized to delete this league."), 401
+    else:
+        return jsonify(message=f"league with id='{league_id}' not found")
 
 # /league/<id> -> Updating a league as league admin
 @leagues.route("/<int:league_id>", methods=["PUT"])
 @jwt_required()
-def update_league(league_id: int):
-    # Add this line at the beginning of your update_league route
+def update_league(league_id):
+    # assign jwt identity to current_user_id
     current_user_id = get_jwt_identity()
-    print(f"Current User ID: {current_user_id}, League Admin ID: {league_id}")
 
     # Query the league by ID
     q = db.select(League).filter_by(id=league_id)
@@ -78,7 +80,7 @@ def update_league(league_id: int):
 
     if league:
         # Check if the current user is the admin of the league
-        if league.admin == current_user_id:
+        if league.admin_id == current_user_id:
             # Parse the JSON data and update the league properties
             league_json = league_schema.load(request.json)
             league.league_name = league_json["league_name"]
@@ -88,7 +90,7 @@ def update_league(league_id: int):
             league.max_bench = league_json["max_bench"]
 
             db.session.commit()
-            print(f"League ID: {league_id}, Current User ID: {current_user_id}")
+
             return jsonify(league_schema.dump(league))
         else:
             return jsonify(message="You are not authorized to update this league."), 401

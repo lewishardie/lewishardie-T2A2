@@ -27,6 +27,10 @@ def init_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
 
+    # @jwt.user_identity_loader
+    # def user_identity_lookup(user):
+    #     return user.id
+
     # connect CLI commands -> blueprint
     from commands import db_commands
     app.register_blueprint(db_commands)

@@ -14,7 +14,7 @@ class BaseConfig(object):
     def JWT_SECRET_KEY(self):
         secret_key = os.environ.get("SECRET_KEY")
 
-        return secret_key or "super-secret"
+        return secret_key
 
 
 class DevelopmentConfig(BaseConfig):

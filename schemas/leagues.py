@@ -13,6 +13,7 @@ class LeagueSchema(ma.Schema):
             "max_bench", 
             "admin_id",
             "admin",
+            "users",
             "teams",
         )
         #load_only = ['teams']
