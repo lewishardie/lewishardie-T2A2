@@ -2,10 +2,9 @@ from main import db
 
 class User(db.Model):
     __tablename__ = "users"
-
-
+    # Primary Key
     id = db.Column(db.Integer, primary_key = True)
-
+    # Define attributes
     username = db.Column(db.String(25), unique = True)
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))

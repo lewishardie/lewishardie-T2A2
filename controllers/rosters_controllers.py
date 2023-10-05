@@ -27,7 +27,7 @@ def get_roster(roster_id):
     
     response = roster_schema.dump(roster)
 
-    # If a team is found, serialize the data and return as a JSON response
+    # If a team is found, serialise the data and return as a JSON response
     if response:
         return jsonify(response), 200
     # If no team is found, return a JSON response with an error message

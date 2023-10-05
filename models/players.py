@@ -1,9 +1,11 @@
+# Import the 'db' instance from the 'main' module
 from main import db
-
+# Define the 'Roster' model
 class Player(db.Model):
     __tablename__ = "players"
-
+    # Primary Key
     id = db.Column(db.Integer, primary_key = True)
+    # Define attributes
     first_name = db.Column(db.String(50), nullable = False)
     last_name = db.Column(db.String(50), nullable = False)
     position = db.Column(db.String(50), nullable = False)

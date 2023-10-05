@@ -29,9 +29,9 @@ def get_user(user_id):
     # Protected to registered users; ensure the user is authenticated to access this endpoint.
     current_user_id = get_jwt_identity()
     
-    # Check if the current user is authorized to access this user's data
+    # Check if the current user is authorised to access this user's data
     if current_user_id != user_id:
-        return jsonify(message=f"'{user_id}' is not authorized"), 401
+        return jsonify(message=f"'{user_id}' is not authorised"), 401
 
     q = db.select(User).filter_by(id=user_id)
     user = db.session.scalar(q)
@@ -49,18 +49,18 @@ def update_users(user_id):
     # Protected to registered users; ensure the user is authenticated to access this endpoint.
     current_user_id = get_jwt_identity()
 
-    # Check if the current_user_id is authorized to access this user's data
+    # Check if the current_user_id is authorised to access this user's data
     if current_user_id != user_id:
-        return jsonify(message=f"'{user_id}' is not authorized"), 401
+        return jsonify(message=f"'{user_id}' is not authorised"), 401
     
     # Query the database to select data from the User table with the ID from the request
     q = db.select(User).filter_by(id=user_id)
     # Tell the query to retireve a single entry from the User table
     user = db.session.scalar(q)
-    # Serialize the user data and store it in the 'response' variable
+    # Serialise the user data and store it in the 'response' variable
     response = user_schema.dump(user)
 
-    # If a user is found and serialized
+    # If a user is found and serialised
     if response:
         # Parse the JSON data and update the user properties
         user_json = user_schema.load(request.json, partial=True)
@@ -91,9 +91,9 @@ def delete_users(user_id):
     # Protected to registered users; ensure the user is authenticated to access this endpoint.
     current_user_id = get_jwt_identity()
 
-    # Check if the current_user_id is authorized to access this user's data
+    # Check if the current_user_id is authorised to access this user's data
     if current_user_id != user_id:
-        return jsonify(message=f"'{user_id}' is not authorized"), 401
+        return jsonify(message=f"'{user_id}' is not authorised"), 401
 
     q = db.select(User).filter_by(id=user_id)
     user = db.session.scalar(q)

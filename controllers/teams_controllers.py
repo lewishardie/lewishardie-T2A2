@@ -24,10 +24,10 @@ def get_team(team_id):
     q = db.select(Team).filter_by(id=team_id)
     # Retireve a single entry from the team table
     team = db.session.scalar(q)
-    # Serialize the team data and store it in the 'response' variable
+    # Serialise the team data and store it in the 'response' variable
     response = team_schema.dump(team)
 
-    # If a team is found, serialize the data and return as a JSON response
+    # If a team is found, serialise the data and return as a JSON response
     if response:
         return jsonify(response), 200
     # If no team is found, return a JSON response with an error message
@@ -42,10 +42,10 @@ def update_team(team_id):
     # Query the database to select all data from the Team table with the ID from the request
     q = db.select(Team).filter_by(id=team_id)
     team = db.session.scalar(q)
-    # Serialize the league data and store it in the 'response' variable
+    # Serialise the league data and store it in the 'response' variable
     response = team_schema.dump(team)
 
-     # If a league is found and serialized.
+     # If a league is found and serialised.
     if response:
         # Check if the current user is the admin of the league
         if team.user_id == current_user_id:
@@ -58,7 +58,7 @@ def update_team(team_id):
             return jsonify(team_schema.dump(team)), 200
         else:
             # Current user isn't authorised to update this team
-            return jsonify(message="You are not authorized to update this team."), 401
+            return jsonify(message="You are not authorised to update this team."), 401
     else:
         # If no team is found, return a JSON response with an error message
         return jsonify(message=f"Cannot update team with id={team_id}. Not found"), 404
@@ -72,12 +72,12 @@ def delete_team(team_id):
     # Query the database to select all data from the Team table with the ID from the request
     q = db.select(Team).filter_by(id=team_id)
     team = db.session.scalar(q)
-    # Check if the current_user_id is authorized to access this user's data
+    # Check if the current_user_id is authorised to access this user's data
 
-    # Serialize the league data and store it in the 'response' variable
+    # Serialise the league data and store it in the 'response' variable
     response = team_schema.dump(team)
 
-     # If a league is found and serialized.
+     # If a league is found and serialised.
     if response:
         # Check if the current user is the admin of the league
         if team.user_id == current_user_id:
@@ -88,7 +88,7 @@ def delete_team(team_id):
             return jsonify(message=f"team with the id=`{team_id}` has been deleted"), 200
         else:
             # Current user isn't authorised to update this team
-            return jsonify(message="You are not authorized to delete this team."), 401
+            return jsonify(message="You are not authorised to delete this team."), 401
     else:
         # If no team is found, return a JSON response with an error message
         return jsonify(message=f"Cannot delete team with id={team_id}. Not found"), 404
@@ -116,8 +116,8 @@ def add_player_to_roster(team_id, player_id):
     if player.roster_id is not None:
         return jsonify(message="Player is already in a roster"), 400
     
-    # Check if the user is authorized to add a player to this team (e.g., team membership)
-    # Implement your authorization logic here
+    # Check if the user is authorised to add a player to this team (e.g., team membership)
+    # Implement your authorisation logic here
     
     # Create a new roster entry for the player on the team
     roster = Roster(team_id=team_id, player_id=player_id)

@@ -29,7 +29,7 @@ def get_player(player_id):
     # Return a json response containing the serialised players data
     response = player_schema.dump(player)
 
-    # If a player is found, serialize the data and return as a JSON response
+    # If a player is found, serialise the data and return as a JSON response
     if response:
         return jsonify(response), 200
     # If no player is found, return a JSON response with an error message
@@ -42,7 +42,7 @@ def available_players():
     q = db.select(Player).filter_by(is_available=True)
     available_players = db.session.scalars(q)
     
-    # If available players are found, serialize the data and return as a JSON response
+    # If available players are found, serialise the data and return as a JSON response
     if available_players:
         return jsonify(players_schema.dump(available_players)), 200
     else:

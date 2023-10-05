@@ -45,10 +45,10 @@ def get_league(league_id):
     q = db.select(League).filter_by(id=league_id)
     # Retireve a single entry from the League table
     league = db.session.scalar(q)
-    # Serialize the league data and store it in the 'response' variable
+    # Serialise the league data and store it in the 'response' variable
     response = league_schema.dump(league)
 
-    # If a league is found, serialize the data and return as a JSON response
+    # If a league is found, serialise the data and return as a JSON response
     if response:
         return jsonify(response), 200
     # If no league is found, return a JSON response with an error message
@@ -76,7 +76,7 @@ def delete_league(league_id):
             return jsonify(message=f"league with the id=`{league_id}` has been deleted"), 200
         else:
             # Current user isn't authorised to delete the league
-            return jsonify(message="You are not authorized to delete this league."), 401
+            return jsonify(message="You are not authorised to delete this league."), 401
     # If no league is found, return a JSON response with an error message
     else:
         return jsonify(message=f"league with id='{league_id}' not found"), 404
@@ -92,10 +92,10 @@ def update_league(league_id):
     q = db.select(League).filter_by(id=league_id)
     # Tell the query to retireve a single entry from the League table    
     league = db.session.scalar(q)
-    # Serialize the league data and store it in the 'response' variable
+    # Serialise the league data and store it in the 'response' variable
     response = league_schema.dump(league)
 
-    # If a league is found and serialized.
+    # If a league is found and serialised.
     if response:
         # Check if the current user is the admin of the league
         if league.admin_id == current_user_id:
@@ -116,7 +116,7 @@ def update_league(league_id):
             return jsonify(league_schema.dump(league)), 200
         else:
             # Current user isn't authorised to update this league
-            return jsonify(message="You are not authorized to update this league."), 401
+            return jsonify(message="You are not authorised to update this league."), 401
     else:
         # If no league is found, return a JSON response with an error message
         return jsonify(message=f"Cannot update league with id={league_id}. Not found"), 404  
@@ -177,10 +177,10 @@ def get_specific_team(league_id, team_id):
     # Query the database to check if the user is already in the league and is part of the specified team
     team = db.session.query(Team).filter_by(id=team_id, league_id=league_id, user_id=current_user_id).first()
     
-    # If a team is found, serialize the data and return it as JSON
+    # If a team is found, serialise the data and return it as JSON
     if team:
         response = team_schema.dump(team)
         return jsonify(response), 200
     else:
-        # Current user isn't authorized to view this team
-        return jsonify(message="You are not authorized to view this team."), 401
+        # Current user isn't authorised to view this team
+        return jsonify(message="You are not authorised to view this team."), 401
