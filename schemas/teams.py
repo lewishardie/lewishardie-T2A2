@@ -9,11 +9,11 @@ class TeamSchema(ma.Schema):
             "team_name", 
             #"starters", 
             #"bench",
-            "user",
+            "user_id",
             "league",
         )
 
-    user = fields.Nested("UserSchema", only=("username",), exclude=("leagues", "admin_league", ))
+    user = fields.Nested("UserSchema", only=("username", "id"), exclude=("leagues", "admin_league", ))
     league = fields.Nested("LeagueSchema", only=("league_name",))
 
 team_schema = TeamSchema()

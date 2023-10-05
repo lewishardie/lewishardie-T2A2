@@ -10,19 +10,17 @@ class LeagueSchema(ma.Schema):
             "description", 
             "max_players_per_team", 
             "max_teams", 
-            "max_bench", 
-            "admin_id",
+            #"max_bench", 
             "admin",
-            "users",
             "teams",
         )
         #load_only = ['teams']
 
     # users = fields.Nested("UserSchema", only=("username",))
-    users = fields.Nested("UserSchema", only=("username",), exclude=("leagues", "admin_league", ))
+    users = fields.Nested("UserSchema", only=("username", "id"), exclude=("leagues", ))
     admin = fields.Nested("UserSchema", only=("username",))
 
-    teams = fields.Nested("TeamSchema", many=True, only=("team_name", "user",))
+    teams = fields.Nested("TeamSchema", many=True, only=("team_name", "user_id",))
     #league = fields.Nested("LeagueSchema", only=("league_name",))
 
 league_schema = LeagueSchema()

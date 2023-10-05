@@ -12,6 +12,7 @@ class Team(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     league_id = db.Column(db.Integer, db.ForeignKey("leagues.id"), nullable=False)
 
+    
     leagues = db.relationship("League", back_populates="teams", cascade="all, delete")
     user = db.relationship("User", back_populates="teams")
 

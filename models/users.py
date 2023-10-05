@@ -13,8 +13,8 @@ class User(db.Model):
     # admin = db.Column(db.Boolean, default = False)
 
     # relationships
-    leagues = db.relationship("League", back_populates="users")
-    teams = db.relationship("Team", back_populates="user")
+    leagues = db.relationship("League", back_populates="users", cascade="all, delete")
+    teams = db.relationship("Team", back_populates="user", cascade="all, delete")
 
     admin_league = db.relationship('League', back_populates="admin")
 

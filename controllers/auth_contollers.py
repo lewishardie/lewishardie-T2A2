@@ -47,11 +47,11 @@ def register_user():
     # create access token
     access_token = create_access_token(identity=user.id, expires_delta=expiry)
 
-    return jsonify({"user":user.email, "token": access_token }), 200 # "user":user.email, 
+    return jsonify({"user": user.username, "message": "Success, you have been registered", "token": access_token }), 200 # "user":user.email, 
 
 # Login authentication
 @auth.route("/login", methods=["POST"])
-
+# @jwt_required
 def login_user():
 
     email = request.json["email"]
@@ -67,4 +67,5 @@ def login_user():
 
     access_token = create_access_token(identity=user.id, expires_delta=expiry)
         
-    return jsonify({"message": "success", "email": user.email, "token": access_token}), 200
+    return jsonify({"message": "Success, you have logged in", "email": user.email, "token": access_token}), 200
+

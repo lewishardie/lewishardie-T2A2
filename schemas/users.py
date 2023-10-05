@@ -18,7 +18,7 @@ class UserSchema(ma.Schema):
             "admin_league",
         )
         
-    admin_league = fields.Nested("LeagueSchema", exclude=("users",))
+    admin_league = fields.Nested("LeagueSchema")
     
     leagues = fields.List(fields.Nested("LeagueSchema", only=("league_name", "teams.team_name")))
     
