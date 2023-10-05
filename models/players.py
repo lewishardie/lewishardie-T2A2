@@ -1,18 +1,19 @@
-# from main import db
+from main import db
 
-# class Player(db.Model):
-#     __tablename__ = "teams"
+class Player(db.Model):
+    __tablename__ = "players"
 
-#     id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key = True)
+    first_name = db.Column(db.String(50), nullable = False)
+    last_name = db.Column(db.String(50), nullable = False)
+    position = db.Column(db.String(50), nullable = False)
+    nfl_team = db.Column(db.String(50), nullable = False)
+    is_available = db.Column(db.Boolean, default=True)
 
-#     player_name = db.Column(db.String, nullable = False)
-# #     #starters = db.Column(db.Test) # potentialy a foreign key
-# #     #bench = db.Column(db.Test) # potentialy a foreign key
+    # Define Foreign Keys
+    league_id = db.Column(db.Integer, db.ForeignKey("leagues.id"))
 
-#     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-#     league_id = db.Column(db.Integer, db.ForeignKey("leagues.id"), nullable=False)
-
-#     leagues = db.relationship("League", back_populates="teams", cascade="all, delete")
-#     user = db.relationship("User", back_populates="teams")
-
-# #     # points_scored = db.Column(db.Integer, db.ForienKey(ullable = False) # amount of players allowed to be rostered on a team
+    # Define Relationships
+    rosters = db.relationship("Roster", back_populates="player")
+    
+    # leagues = db.relationship("League", back_populates="players")

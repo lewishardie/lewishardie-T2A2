@@ -1,28 +1,27 @@
-# from main import ma
-# from marshmallow import fields
-# from marshmallow.validate import Length
+from main import ma
+from marshmallow import fields
 
-# class PlayerSchema(ma.Schema):
-#     # username = fields.String(required=True, validate=Length(min=1, error="username cannot be blank"))
-#     # email = fields.String(required=True)
+class PlayerSchema(ma.Schema):
 
-#     class Meta:
-#         fields = (
-#             "id",
-#             "username",
-#             "first_name",
-#             "last_name",
-#             "email",
-#             "password", # delete when not needed
-#             "leagues",
-#             "admin_league",
-#         )
+
+    class Meta:
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "nfl_team",
+            "position",
+            "is_available",
+        )
         
-#     admin_league = fields.Nested("LeagueSchema", exclude=("users",))
+    # admin_league = fields.Nested("LeagueSchema", exclude=("users",))
     
-#     leagues = fields.List(fields.Nested("LeagueSchema", only=("league_name", "teams.team_name")))
+    # leagues = fields.List(fields.Nested("LeagueSchema", only=("league_name", "teams.team_name")))
     
-#     teams = fields.Nested("TeamSchema", many=True, exclude=("user", "league"))
+    # teams = fields.Nested("TeamSchema", many=True, exclude=("user", "league"))
 
-# player_schema = PlayerSchema()
-# players_schema = PlayerSchema(many = True)
+    leagues = fields.Nested("LeagueSchema", only=("id", "league_name"))
+    rosters = fields.Nested("RosterSchema", only=("id", "position"), many=True)
+
+player_schema = PlayerSchema()
+players_schema = PlayerSchema(many = True)

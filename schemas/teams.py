@@ -7,14 +7,15 @@ class TeamSchema(ma.Schema):
         fields = (
             "id",
             "team_name", 
-            #"starters", 
-            #"bench",
-            "user_id",
+            "user",
             "league",
+            "roster",
         )
 
-    user = fields.Nested("UserSchema", only=("username", "id"), exclude=("leagues", "admin_league", ))
+    # user_id = fields.Int()
+    user = fields.Nested("UserSchema", only=("username",)) 
     league = fields.Nested("LeagueSchema", only=("league_name",))
+    roster = fields.Nested("RosterSchema", many=True, only=("roster_slot",))
 
 team_schema = TeamSchema()
 teams_schema = TeamSchema(many = True)

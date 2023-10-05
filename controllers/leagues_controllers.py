@@ -1,17 +1,16 @@
 from flask import Blueprint, jsonify, request, abort
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from main import db
 from models import League, User, Team
 from schemas.leagues import league_schema, leagues_schema
 from schemas.teams import team_schema, teams_schema
-from schemas.users import user_schema, users_schema
+
 
 # /league
-leagues = Blueprint('league', __name__, url_prefix="/league")
+leagues = Blueprint('leagues', __name__, url_prefix="/leagues")
 
-# /leagues
+# GET /leagues - get all leagues
 @leagues.route("/", methods=["GET"])
 def get_leagues():
     # Query the database to select all data from League table
@@ -19,29 +18,29 @@ def get_leagues():
     # Tell the query to retireve multiple entries from the League table
     leagues = db.session.scalars(q)
     # Return a json response containing the serialised leagues data
-    return jsonify(leagues_schema.dump(leagues))
+    return jsonify(leagues_schema.dump(leagues)), 200
 
-# Create leagues
+# POST /leagues - post/create a league
 @leagues.route("/", methods=["POST"])
 @jwt_required()
 def create_leagues():
     # Protected to registered users; ensure the user is authenticated to access this endpoint.
     current_user_id = get_jwt_identity()
     # Load the League data from the request JSON
-    league_json = league_schema.load(request.json)
+    league_json = league_schema.load(request.json, partial=True)
     # Create a new League instance with the loaded data
     league = League(**league_json)
-    # Create a new League instance with the loaded data
+    # Assign current user that's creating the league as admin
     league.admin_id = current_user_id
     
     db.session.add(league)
     db.session.commit()
 
-    return jsonify(league_schema.dump(league))
+    return jsonify(league_schema.dump(league)), 201
 
-# Getting a league with ID
+# GET /leagues/league_id - get a league with an ID
 @leagues.route("/<int:league_id>", methods = ["GET"])
-def get_league(league_id: int):
+def get_league(league_id):
     # Query the database to retrieve data from the League table with the provided ID
     q = db.select(League).filter_by(id=league_id)
     # Retireve a single entry from the League table
@@ -49,13 +48,13 @@ def get_league(league_id: int):
     # Serialize the league data and store it in the 'response' variable
     response = league_schema.dump(league)
 
-    # If a league is found and serialized, return it as a JSON response
+    # If a league is found, serialize the data and return as a JSON response
     if response:
-        return jsonify(response)
+        return jsonify(response), 200
     # If no league is found, return a JSON response with an error message
-    return jsonify(message=f"league with ID = '{league_id}' not found")
+    return jsonify(message=f"league with ID = '{league_id}' not found"), 404
 
-# Deleting a league with ID and authorization
+# DELETE /leagues/league_id - delete a league with an ID and authorisation
 @leagues.route("/<int:league_id>", methods=["DELETE"])
 @jwt_required()
 def delete_league(league_id):
@@ -66,7 +65,7 @@ def delete_league(league_id):
     # Tell the query to retireve a single entry from the League table
     league = db.session.scalar(q)
     
-    # If a league is found and serialized
+    # If a league is found
     if league:
         # If the current user is the admin of the league
         if league.admin_id == current_user_id:
@@ -74,16 +73,16 @@ def delete_league(league_id):
             db.session.delete(league)
             db.session.commit()
             # Return a message confirming the deletion of the league
-            return jsonify(message=f"league with the id=`{league_id}` has been deleted")
+            return jsonify(message=f"league with the id=`{league_id}` has been deleted"), 200
         else:
             # Current user isn't authorised to delete the league
             return jsonify(message="You are not authorized to delete this league."), 401
     # If no league is found, return a JSON response with an error message
     else:
-        return jsonify(message=f"league with id='{league_id}' not found")
+        return jsonify(message=f"league with id='{league_id}' not found"), 404
     
 
-# Updating a league with ID and authorization
+# PUT /leagues/league_id - update a league with an ID and authorisation
 @leagues.route("/<int:league_id>", methods=["PUT"])
 @jwt_required()
 def update_league(league_id):
@@ -101,16 +100,20 @@ def update_league(league_id):
         # Check if the current user is the admin of the league
         if league.admin_id == current_user_id:
             # Parse the JSON data and update the league properties
-            league_json = league_schema.load(request.json)
-            league.league_name = league_json["league_name"]
-            league.description = league_json["description"]
-            league.max_players_per_team = league_json["max_players_per_team"]
-            league.max_teams = league_json["max_teams"]
-            league.max_bench = league_json["max_bench"]
+            league_json = league_schema.load(request.json, partial=True)
+            # Not every property needs to be updated as partial = True
+            if "league_name" in league_json:
+                league.league_name = league_json["league_name"]
+            if "description" in league_json:
+                league.description = league_json["description"]
+            if "max_player_per_team" in league_json:
+                league.max_player_per_team = league_json["max_player_per_team"]
+            if "max_teams" in league_json:
+                league.max_teams = league_json["max_teams"]
 
             db.session.commit()
-            # Return a message confirming league has been updated
-            return jsonify(league_schema.dump(league))
+            # Return a JSON dump of the updated details
+            return jsonify(league_schema.dump(league)), 200
         else:
             # Current user isn't authorised to update this league
             return jsonify(message="You are not authorized to update this league."), 401
@@ -118,12 +121,14 @@ def update_league(league_id):
         # If no league is found, return a JSON response with an error message
         return jsonify(message=f"Cannot update league with id={league_id}. Not found"), 404  
 
+# POST /leagues/join/league_id - join a specific league with ID, when the user is authenticated, and the league isn't full
 @leagues.route("/join/<int:league_id>", methods=["POST"])
 @jwt_required()
 def join_league(league_id):
+    # Protected to registered users; ensure the user is authenticated to access this endpoint.
     current_user_id = get_jwt_identity()
     
-    # Check if the league exists and is not full
+    # Check if the league exists
     q = db.select(League).filter_by(id=league_id)
     # Tell the query to retrieve a single entry from the League table    
     league = db.session.scalar(q)
@@ -138,7 +143,7 @@ def join_league(league_id):
     filter(User.id == current_user_id).first()
 
     if user_in_league:
-        return jsonify(message="You have already joined this league."), 401
+        return jsonify(message="You have already joined this league."), 400
     
     # Check to see if league isn't full
     if len(league.teams) > league.max_teams:
@@ -148,12 +153,34 @@ def join_league(league_id):
     team_json = team_schema.load(request.json)
     # Create a new Team instance with the loaded data
     team = Team(**team_json)
-    # Create a new Team instance with the loaded data
     team.user_id = current_user_id
     team.league_id = league_id
 
     db.session.add(team)
     db.session.commit()
-    
-    return jsonify(team_schema.dump(team))
+    # Return a JSON dump of the updated details
+    return jsonify(team_schema.dump(team)), 201
 
+# GET /leagues/league_id/team/team_id - view a team_id thats in a league_id
+@leagues.route("/<int:league_id>/team/<int:team_id>", methods=["GET"])
+@jwt_required()
+def get_specific_team(league_id, team_id):
+    # Protected to registered users; ensure the user is authenticated to access this endpoint.
+    current_user_id = get_jwt_identity()
+
+    # Query the database to select to see if the league exists
+    league = db.session.query(League).filter_by(id=league_id).first()
+    # If the league doesn't exist, return an error message
+    if not league:
+        return jsonify(message=f"League with id='{league_id}' not found"), 404
+
+    # Query the database to check if the user is already in the league and is part of the specified team
+    team = db.session.query(Team).filter_by(id=team_id, league_id=league_id, user_id=current_user_id).first()
+    
+    # If a team is found, serialize the data and return it as JSON
+    if team:
+        response = team_schema.dump(team)
+        return jsonify(response), 200
+    else:
+        # Current user isn't authorized to view this team
+        return jsonify(message="You are not authorized to view this team."), 401

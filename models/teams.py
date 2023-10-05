@@ -6,14 +6,20 @@ class Team(db.Model):
     id = db.Column(db.Integer, primary_key = True)
 
     team_name = db.Column(db.String, nullable = False)
-#     #starters = db.Column(db.Test) # potentialy a foreign key
-#     #bench = db.Column(db.Test) # potentialy a foreign key
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     league_id = db.Column(db.Integer, db.ForeignKey("leagues.id"), nullable=False)
 
-    
-    leagues = db.relationship("League", back_populates="teams", cascade="all, delete")
+    league = db.relationship("League", back_populates="teams", cascade="all, delete")
     user = db.relationship("User", back_populates="teams")
+    roster = db.relationship("Roster", back_populates="team")
 
-#     # points_scored = db.Column(db.Integer, db.ForienKey(ullable = False) # amount of players allowed to be rostered on a team
+def create_roster(self):
+        from models import Roster 
+        roster = Roster(team_id=self.id)
+        db.session.add(roster)
+        db.session.commit()
+
+def __init__(self, *args, **kwargs):
+        super(Team, self).__init__(*args, **kwargs)
+        self.create_roster()
