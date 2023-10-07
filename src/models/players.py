@@ -1,6 +1,6 @@
 # Import the 'db' instance from the 'main' module
 from main import db
-# Define the 'Roster' model
+# Define the 'Player' model
 class Player(db.Model):
     __tablename__ = "players"
     # Primary Key

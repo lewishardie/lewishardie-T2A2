@@ -164,7 +164,7 @@ def join_league(league_id):
 # GET /leagues/league_id/team/team_id - view a team_id thats in a league_id
 @leagues.route("/<int:league_id>/team/<int:team_id>", methods=["GET"])
 @jwt_required()
-def get_specific_team(league_id, team_id):
+def get_specific_tea(league_id, team_id):
     # Protected to registered users; ensure the user is authenticated to access this endpoint.
     current_user_id = get_jwt_identity()
 

@@ -2,7 +2,7 @@
 from main import ma
 from marshmallow import fields
 
-# Define the 'LeagueTeamSchema' class for serializing and deserializing 'League' model data
+# Define the 'LeagueSchema' class for serializing and deserializing 'League' model data
 class LeagueSchema(ma.Schema):
     
     class Meta:

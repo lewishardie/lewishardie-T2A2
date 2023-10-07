@@ -4,7 +4,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from main import db
 from models import League, User, Team, Player, Roster
 from schemas.teams import team_schema, teams_schema
-
+# create a blueprint
 teams = Blueprint("teams", __name__, url_prefix="/teams")
 
 # GET /teams - view all teams

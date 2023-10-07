@@ -1,5 +1,5 @@
 from main import db
-
+# Define the 'User' model
 class User(db.Model):
     __tablename__ = "users"
     # Primary Key
